@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { CartContext } from "../context/CartContext";
+import { API_BASE_URL } from "../api/config";
 
 export default function CartSidebar({ isOpen, closeCart }) {
   const { cart, total } = useContext(CartContext);
@@ -11,7 +12,7 @@ export default function CartSidebar({ isOpen, closeCart }) {
     const productIds = cart.map((item) => item.id);
 
     try {
-      const res = await fetch("http://localhost:5000/api/orders", {
+      const res = await fetch(`${API_BASE_URL}/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -21,13 +22,11 @@ export default function CartSidebar({ isOpen, closeCart }) {
       });
 
       const data = await res.json();
-
-      alert(data.message);       // "Order placed!"
+      alert(data.message);
       setStatus("Order placed!");
 
       setTimeout(() => setStatus(""), 1500);
-
-      closeCart();               // close sidebar
+      closeCart();
     } catch (error) {
       setStatus("Failed to place order");
     }
@@ -44,7 +43,6 @@ export default function CartSidebar({ isOpen, closeCart }) {
         <button onClick={closeCart} className="text-2xl">✖</button>
       </div>
 
-      {/* Status Message */}
       {status && (
         <p className="p-4 text-blue-600 font-semibold">{status}</p>
       )}
@@ -62,7 +60,6 @@ export default function CartSidebar({ isOpen, closeCart }) {
 
           <h3 className="text-xl font-bold mt-4">Total: ${total.toFixed(2)}</h3>
 
-          {/* Checkout button with logic */}
           <button
             onClick={handleCheckout}
             className="w-full bg-blue-600 text-white py-2 mt-4 rounded"
