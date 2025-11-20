@@ -8,7 +8,10 @@ def create_app():
     CORS(app)
     db.init_app(app)
     migrate.init_app(app, db)
-
+    
+    from .api.orders import bp as orders_bp
     from .api.products import bp as products_bp
     app.register_blueprint(products_bp, url_prefix='/api')
+    app.register_blueprint(orders_bp, url_prefix='/api')
+
     return app

@@ -1,35 +1,31 @@
-import { useEffect, useState } from "react";
-import SearchBar from "./components/SearchBar";
-import ProductGrid from "./components/ProductGrid";
-import { fetchProducts } from "./api/products";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import Navbar from "./components/Navbar";
+import CartSidebar from "./components/CartSidebar";
+
+import HomePage from "./pages/HomePage";
+import ProductsPage from "./pages/ProductPage";
 
 function App() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const load = async (searchText = "") => {
-    setLoading(true);
-    const data = await fetchProducts(searchText);
-    setProducts(data);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    load();
-  }, []);
+  const toggleCart = () => setIsCartOpen(!isCartOpen);
+  const closeCart = () => setIsCartOpen(false);
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Products</h1>
+    <BrowserRouter>
+      {/* Navbar */}
+      <Navbar toggleCart={toggleCart} />
 
-      <SearchBar onSearch={load} />
+      {/* Slide Cart Sidebar */}
+      <CartSidebar isOpen={isCartOpen} closeCart={closeCart} />
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <ProductGrid products={products} />
-      )}
-    </div>
+      {/* Routes */}
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/products" element={<ProductsPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
